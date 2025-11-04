@@ -1,0 +1,44 @@
+name: CI for no1homelab Agent
+
+on:
+  push:
+    branches:
+      - agents/no1homelab # Trigger on pushes to this specific branch
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH # Add uv to PATH for subsequent steps
+
+    - name: Install dependencies
+      working-directory: agents/no1homelab # Run uv in the agent's directory
+      run: uv pip install -e .
+
+    - name: Install linting tools
+      working-directory: agents/no1homelab
+      run: uv pip install flake8 black
+
+    - name: Run Flake8 Linting
+      working-directory: agents/no1homelab
+      run: flake8 src/no1homelab/
+
+    - name: Run Black Formatter Check
+      working-directory: agents/no1homelab
+      run: black --check src/no1homelab/
+
+    - name: Run tests
+      working-directory: agents/no1homelab
+      run: python -m unittest test_agent_mind.py # Assuming test_agent_mind.py is a unittest file
