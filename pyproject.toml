@@ -1,0 +1,16 @@
+[project]
+name = "no1homelab"
+version = "0.1.0"
+description = "The first agent of the Digital Empire. A project scaffolder and general assistant."
+authors = [{ name = "The Architect", email = "architect@no1homelab.dev" }]
+
+dependencies = [
+    "ollama",
+    "litellm",
+]
+
+[project.scripts]
+no1-scaffold = "no1homelab.main:cli"
+
+[tool.uv]
+# This section can be used for uv-specific configurations later.
